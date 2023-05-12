@@ -15,23 +15,23 @@ args = parser.parse_args()
 # Build game
 if args.os == WINDOWS:
 	call(["go", "build", "-ldflags", "-H=windowsgui"], cwd="../")
-elif args.os == LINUX or args.os == WINDOWS_DEBUG:
+elif args.os in [LINUX, WINDOWS_DEBUG]:
 	call(["go", "build"], cwd="../")
 
 # Set the directory/zipfile name
-directory = "gokoban-" + args.os + "-bin"
+directory = f"gokoban-{args.os}-bin"
 if args.version:
-	directory += ("-" + args.version)
+	directory += f"-{args.version}"
 
 # Ignore any .blend or .xcf files
 ignore_func = lambda d, files: [f for f in files if isfile(join(d, f))  and (f.endswith('.xcf') or f.endswith('.blend'))]
 
 # Copy necessary files
-shutil.copytree('../levels', directory + "/levels")
-shutil.copytree('../audio', directory + "/audio")
-shutil.copytree('../img', directory + "/img", ignore=ignore_func)
-shutil.copytree('../gui', directory + "/gui", ignore=ignore_func)
-shutil.copytree('../gopher', directory + "/gopher", ignore=ignore_func)
+shutil.copytree('../levels', f"{directory}/levels")
+shutil.copytree('../audio', f"{directory}/audio")
+shutil.copytree('../img', f"{directory}/img", ignore=ignore_func)
+shutil.copytree('../gui', f"{directory}/gui", ignore=ignore_func)
+shutil.copytree('../gopher', f"{directory}/gopher", ignore=ignore_func)
 shutil.copy('../LICENSE', directory)
 shutil.copy('../README.md', directory)
 
@@ -39,7 +39,7 @@ shutil.copy('../README.md', directory)
 shutil.move('../gokoban.exe', directory)
 
 # If windows, need to copy the sound library DLLs
-if args.os == WINDOWS or args.os == WINDOWS_DEBUG:
+if args.os in [WINDOWS, WINDOWS_DEBUG]:
 	shutil.copy('win/libogg.dll', directory)
 	shutil.copy('win/libvorbis.dll', directory)
 	shutil.copy('win/libvorbisfile.dll', directory)
